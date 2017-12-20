@@ -28,8 +28,7 @@ Request.prototype.post = function(callback, body) {
     console.log(responseBody);
     callback(responseBody);
   });
-
-  console.log("f");
+  console.log('body',body);
   request.send(JSON.stringify(body));
 }
 

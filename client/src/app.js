@@ -7,31 +7,41 @@ const request = new Request("http://localhost:3000/countries");
 
 const app = function() {
   const select = document.querySelector('#countries');
+
   requestCountry.get(function(countries) {
-    countries.forEach(function(country) {
+    const addButtonClicked = function(evt) {
+      const index = document.querySelector('#countries').value;
+      const country = countries[index];
+      request.post(createCountryRequestComplete, country);
+    }
+
+    const addCountryButton = document.querySelector('#add-country');
+    addCountryButton.addEventListener('click', addButtonClicked);
+
+    countries.forEach(function(country, index) {
       const option = document.createElement('option');
       option.innerText = country.name;
+      option.value = index;
       select.appendChild(option);
     });
   });
 
-  const addCountryButton = document.querySelector('#add-country');
-  addCountryButton.addEventListener('click', addButtonClicked);
+  const deleteButton = document.querySelector('#delete-all');
+  deleteButton.addEventListener('click', deleteButtonClicked);
+
+// END
 }
 
-const addButtonClicked = function(evt) {
-  console.log('add btn has been clicked');
-  const nameValue = document.querySelector('#countries').value;
-  console.log(nameValue);
+const deleteButtonClicked = function(evt) {
+  console.log('delete button clicked');
+  request.delete(deleteRequestComplete);
+}
 
-  const body = {
-    countryName: nameValue
-  }
-  request.post(createCountryRequestComplete, body);
+const deleteRequestComplete = function() {
+  countryView.clear();
 }
 
 const createCountryRequestComplete = function(country) {
-  console.log('checking log status');
   countryView.addCountry(country);
 }
 
