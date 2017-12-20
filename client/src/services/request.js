@@ -20,12 +20,16 @@ Request.prototype.post = function(callback, body) {
   request.open('POST', this.url);
   request.setRequestHeader('Content-Type', 'application/json');
   request.addEventListener('load', function() {
+    console.log('Yoni wants to log');
     if(this.status !== 201) {
       return;
     }
     const responseBody = JSON.parse(this.responseText);
+    console.log(responseBody);
     callback(responseBody);
   });
+
+  console.log("f");
   request.send(JSON.stringify(body));
 }
 

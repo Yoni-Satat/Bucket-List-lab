@@ -68,8 +68,11 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 const Request = __webpack_require__(1);
+const CountryView = __webpack_require__(2);
 
+const countryView = new CountryView();
 const requestCountry = new Request("https://restcountries.eu/rest/v2/all");
+const request = new Request("http://localhost:3000/countries");
 
 const app = function() {
   const select = document.querySelector('#countries');
@@ -81,7 +84,24 @@ const app = function() {
     });
   });
 
-  
+  const addCountryButton = document.querySelector('#add-country');
+  addCountryButton.addEventListener('click', addButtonClicked);
+}
+
+const addButtonClicked = function(evt) {
+  console.log('add btn has been clicked');
+  const nameValue = document.querySelector('#countries').value;
+  console.log(nameValue);
+
+  const body = {
+    countryName: nameValue
+  }
+  request.post(createCountryRequestComplete, body);
+}
+
+const createCountryRequestComplete = function(country) {
+  console.log('checking log status');
+  countryView.addCountry(country);
 }
 
 document.addEventListener('DOMContentLoaded', app);
@@ -113,12 +133,16 @@ Request.prototype.post = function(callback, body) {
   request.open('POST', this.url);
   request.setRequestHeader('Content-Type', 'application/json');
   request.addEventListener('load', function() {
+    console.log('Yoni wants to log');
     if(this.status !== 201) {
       return;
     }
     const responseBody = JSON.parse(this.responseText);
+    console.log(responseBody);
     callback(responseBody);
   });
+
+  console.log("f");
   request.send(JSON.stringify(body));
 }
 
@@ -135,6 +159,32 @@ Request.prototype.delete = function(callback) {
 }
 
 module.exports = Request;
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports) {
+
+const CountryView = function() {
+  this.countries = [];
+}
+
+CountryView.prototype.addCountry = function(country) {
+  this.countries.push(country);
+  console.log(this.countries);
+  this.render(country);
+}
+
+CountryView.prototype.render = function(country) {
+  console.log('are you logged?');
+  const ul = document.querySelector('#countries-list');
+  const li = document.createElement('li');
+  li.innerText = `D BucketList ${country.countryName}`;
+  ul.appendChild(li);
+}
+
+
+module.exports = CountryView;
 
 
 /***/ })
